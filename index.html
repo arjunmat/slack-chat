@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Slack-Chat : A support chat feature for your website that integrates with #Slack">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Slack-Chat</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/improvi/slack-chat">View on GitHub</a>
+
+          <h1 id="project_title">Slack-Chat</h1>
+          <h2 id="project_tagline">A support chat feature for your website that integrates with #Slack</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/improvi/slack-chat/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/improvi/slack-chat/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+<a id="slack-chat" class="anchor" href="#slack-chat" aria-hidden="true"><span class="octicon octicon-link"></span></a>Slack-Chat.</h3>
+
+<p>Slack-Chat is a jQuery plugin that integrates a support chat system with your web app allowing your users to communicate with your team on Slack effectively and address queries faster.</p>
+
+<p>When users send a message, it will show up as a chat in the Channel specified by you.</p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+
+<p>Slack-Chat requires MomentJS. (<a href="http://momentjs.com">http://momentjs.com</a>)</p>
+
+<h3>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<ol>
+<li>Download and add the JavaScript and CSS files to your web-app.</li>
+<li>Call Slack-Chat on the element that triggers the chat system.</li>
+</ol>
+
+<pre><code>var slackChatOptions = {
+                apiToken: '',           //#Slack Auth token. Required. 
+                channelId: '',      //#Slack channel ID. Required.
+                user: '',           //name of the user. Required.
+                userLink: '',       //link to the user in the application - shown in #Slack
+                userImg: '',        //image of the user
+                userId: '',         //id of the user in the application
+                sysImg: '',         //image to show when the support team replies
+                sysUser: '',                //Required.   
+                queryInterval: 3000,
+                chatBoxHeader: "Need help? Talk to our support team right here",
+                slackColor: "#36a64f",
+                messageFetchCount: 100,
+                botUser: '',        //username to post to #Slack. Required.
+                sendOnEnter: true,
+                disableIfAway: false,
+                elementToDisable: null,
+                heightOffset: 75,
+                debug: false
+}
+
+$(&lt;elem&gt;).slackChat(slackChatOptions);
+</code></pre>
+
+<h3>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span class="octicon octicon-link"></span></a>Options</h3>
+
+<p><strong>apiToken</strong> (Required)</p>
+
+<p>Your Slack Token. Generate one at <a href="https://api.slack.com/web">https://api.slack.com/web</a> if you don't have one.</p>
+
+<p><strong>channelId</strong> (Required)</p>
+
+<p>ID of the Slack Channel the messages should appear in.</p>
+
+<p><strong>user</strong> (Required)</p>
+
+<p>Name of the user.</p>
+
+<p><strong>userLink</strong></p>
+
+<p>Link to the user in your web-app. This will be show in Slack for quick reference for your support team.</p>
+
+<p><strong>userImg</strong></p>
+
+<p>A link to the profile image of the user.</p>
+
+<p><strong>userId</strong></p>
+
+<p>Your web-app ID of the user. For reference for your support team.</p>
+
+<p><strong>sysUser</strong>(Required)</p>
+
+<p>The text that will be displayed when your support team writes on the channel.</p>
+
+<p><strong>sysImg</strong></p>
+
+<p>The image to be displayed when your support team writes on the channel.</p>
+
+<p><strong>queryInterval</strong></p>
+
+<p>Polling interval on the channel. Default: 3000</p>
+
+<p><strong>chatBoxHeader</strong></p>
+
+<p>Customize the header HTML on the Chat Strip</p>
+
+<p>Default:"Need help? Talk to our support team right here"</p>
+
+<p><strong>slackColor</strong></p>
+
+<p>A hex color code used to identify messages from Slack-Chat in Slack</p>
+
+<p><strong>messageFetchCount</strong></p>
+
+<p>Number of messages to fetch for each poll.</p>
+
+<p>Default: 100</p>
+
+<p><strong>botUser</strong> (Required)</p>
+
+<p>A name that messages will be posted on Slack as.</p>
+
+<p><strong>sendOnEnter</strong></p>
+
+<p>Send the message when the user presses enter on the textbox.</p>
+
+<p>Default: true</p>
+
+<p><strong>disableIfAway</strong></p>
+
+<p>Disable the Support if there are no online users in your Slack team</p>
+
+<p><strong>elementToDisable</strong></p>
+
+<p>The jQuery element that must be disabled. Ex. $('.slackChatTrigger')</p>
+
+<p>Used only in conjunction with disableIfAway</p>
+
+<p><strong>heightOffset</strong></p>
+
+<p>To adjust the height of the message window in pixels.</p>
+
+<p>Default: 75</p>
+
+<p><strong>debug</strong></p>
+
+<p>Shows a few debug messages if set to true.</p>
+
+<p>Default: false</p>
+
+<h3>
+<a id="try-it-yourself-here" class="anchor" href="#try-it-yourself-here" aria-hidden="true"><span class="octicon octicon-link"></span></a>Try it yourself here</h3>
+
+<p>Try a demo here. <a href="http://slack.improvi.in">http://slack.improvi.in</a></p>
+
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>Created by Arjun Mathai. Send any error logs, feature requests, etc to <a href="mailto:arjun.mathai@gmail.com">arjun.mathai@gmail.com</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Slack-Chat maintained by <a href="https://github.com/improvi">improvi</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-33221195-3");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
