@@ -124,7 +124,7 @@ Shows a few debug messages if set to true.
 Default: false
 
 ### Try it yourself here
-Try a demo here. http://slack.improvi.in
+Try a demo here. http://slack-chat.improvi.in
 
 ### Authors and Contributors
 Created by Arjun Mathai. Send any error logs, feature requests, etc to arjun.mathai@gmail.com
