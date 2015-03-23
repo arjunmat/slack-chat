@@ -147,3 +147,13 @@
 	font-weight: 200;
 	float: left;
 }
+
+@media screen and (max-width:768px) {
+	.slackchat.slack-chat-box {
+		width: 85%;
+	}
+
+	.slackchat .slack-chat-header {
+		font-size: 13px;
+	}
+}

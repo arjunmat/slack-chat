@@ -48,3 +48,13 @@ footer {
 .message-box > a:hover {
 	color: #fff;
 }
+
+@media screen and (max-width: 768px) {
+	.message-box {
+		bottom: 25px;
+		right: 25px;
+		font-size: 20px;
+		height: 40px;
+		width: 40px;
+	}
+}
