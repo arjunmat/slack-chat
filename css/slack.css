@@ -1,0 +1,149 @@
+/* Slack Chat CSS */
+
+.slackchat.slack-chat-box {
+	display: none;
+	position: fixed;
+	width: 25%;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: #fff;
+	z-index: 80001;
+	padding: 8px;
+	border-left: 1px solid #ddd;
+	box-shadow: 1px 1px 4px #aaa;
+	font-family: inherit;
+}
+
+.slackchat .slack-chat-header {
+	font-weight: 600;
+}
+
+.slackchat .slack-message-box {
+	font-size: 12px;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	margin: 10px 0;
+	padding: 10px 0;
+  	overflow: auto;
+}
+
+.slackchat .slack-new-message {
+	max-width: 80%;
+	display: inline-block;
+	border-radius: 0;
+	border: 0;
+	box-shadow: none;
+	font-size: 12px;
+	padding: 5px;
+	min-height: 55px;
+}
+
+.slackchat .slack-new-message:focus,
+.slackchat .slack-new-message:active {
+	border: 1px solid #ddd;
+	box-shadow: 0 0 1px #aaa;
+}
+
+.slackchat .slack-post-message {
+	font-size: 17px;
+	color: #fff;
+	background: #e22b2f;
+	border-radius: 50%;
+	padding: 5px;
+	height: 30px;
+  	width: 30px;
+  	text-align: center;
+  	display: inline-block;
+  	vertical-align: top;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.slackchat .slack-post-message:hover {
+	background: #BD3235;
+	cursor: pointer;
+}
+
+.slackchat .slack-message-box .message-item {
+	margin-bottom: 5px;
+	color: #363636;
+}
+
+.slackchat .slack-message-box .message-item .username {
+	display:block;
+	font-weight: 600;
+	margin-bottom: 1px;
+}
+
+.slackchat .slack-message-box .message-item .timestamp {
+	color: #aaa;
+	font-size: 10px;
+	font-style: italic;
+	font-weight: 200;
+}
+
+.slackchat .slack-message-box .userImg {
+	display: inline-block;
+	width: 10%;
+	min-width: 30px;
+	margin-right: 5px;
+	vertical-align: top;
+}
+
+.slackchat .slack-message-box .userImg img {
+	max-width: 100%;
+}
+
+.slackchat .slack-message-box .msgBox {
+	display: inline-block;
+	max-width: 88%;
+	vertical-align: top;
+}
+
+/*scrollbar styling*/
+.slackchat .slack-message-box::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+.slackchat .slack-message-box::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #F5F5F5;
+}
+
+.slackchat .slack-message-box::-webkit-scrollbar-thumb
+{
+	border-radius: 5px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #aaa;
+}
+
+.slackchat .presence {
+	overflow: hidden;
+}
+
+.slackchat .presence .presence-icon {
+	color: #E2A12B;
+	font-size: 28px;
+	display:inline;
+	margin: 0;
+	margin-right: 5px;
+	line-height: 20px;
+	float: left;
+}
+
+.slackchat .presence.active .presence-icon {
+	color: #36a64f;
+}
+
+.slackchat .presence > .presence-text {
+	color: #aaa;
+	font-size: 12px;
+	display: inline;
+	font-weight: 200;
+	float: left;
+}
