@@ -6,9 +6,11 @@ When users send a message, it will show up as a chat in the Channel specified by
 ### Changelog
 
 v1.1 - added support for links posted from slack
+
      - added option defaultUserImg, an image link - will be shown if the userImg parameter is blank
-     - responsive layouts
      
+     - responsive layouts
+
 v1.0 - Initial commit
 
 ### Requirements
@@ -36,7 +38,8 @@ var slackChatOptions = {
 	            disableIfAway: false,
 	            elementToDisable: null,
 	            heightOffset: 75,
-	            debug: false
+	            debug: false,
+	            defaultUserImg: ''
 }
 
 $(<elem>).slackChat(slackChatOptions);
