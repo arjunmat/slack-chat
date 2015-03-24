@@ -89,6 +89,7 @@
 	min-width: 30px;
 	margin-right: 5px;
 	vertical-align: top;
+	text-align: center;
 }
 
 .slackchat .slack-message-box .userImg img {
