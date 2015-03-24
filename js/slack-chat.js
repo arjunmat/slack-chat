@@ -156,7 +156,7 @@
 								var messageText = methods.checkforLinks(message.text.trim());
 
 								html += "<div class='message-item'>";
-								if(userImg !== '')
+								if(userImg !== '' && typeof userImg !== 'undefined')
 									html += "<div class='userImg'><img src='" + userImg + "' /></div>";
 								else if(options.defaultUserImg !== '')
 									html += "<div class='userImg'><img src='" + options.defaultUserImg + "' /></div>";
@@ -220,7 +220,7 @@
 				{
 					"title": "ID",
                     "value": options.userId,
-                    "short": false
+                    "short": true
 				}
 			];
 
