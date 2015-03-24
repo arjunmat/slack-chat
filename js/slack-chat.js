@@ -1,3 +1,5 @@
+/*SlackChat*/
+/* v1.1 */
 (function( $ ) {
 
 	var methods = {
@@ -20,7 +22,8 @@
 	            disableIfAway: false,
 	            elementToDisable: null,
 	            heightOffset: 75,
-	            debug: false
+	            debug: false,
+	            defaultUserImg: ''
             };
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -150,10 +153,13 @@
 								if(message.fields)
 									msgUserId = message.fields[0].value;
 
-								var messageText = message.text.trim();
+								var messageText = methods.checkforLinks(message.text.trim());
+
 								html += "<div class='message-item'>";
 								if(userImg !== '')
 									html += "<div class='userImg'><img src='" + userImg + "' /></div>";
+								else if(options.defaultUserImg !== '')
+									html += "<div class='userImg'><img src='" + options.defaultUserImg + "' /></div>";
 								html += "<div class='msgBox'>";
 								if(msgUserId !== '')
 									html += "<div class='username'>" + (msgUserId == options.userId? "You":userName) + "</div>";
@@ -169,7 +175,7 @@
 
 								message = resp.messages[i].text;
 								var userName = options.sysUser;
-								var messageText = message;
+								var messageText = methods.checkforLinks(message);
 								html += "<div class='message-item'>";
 								if(options.sysImg !== '')
 									html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
@@ -308,6 +314,34 @@
 			$($elem).unbind('click');
 
 			$('.slackchat').remove();
+		},
+
+		checkforLinks: function (text) {
+			var regex = /.*<[a-zA-Z0-9\/:\-.]+|[a-zA-Z0-9\/:\-.]+>.*/;
+			var startIndex = 0;
+
+			if(regex.test(text))
+			{
+				while(startIndex <= text.indexOf('<http'))
+				{
+					linkStartIndex = text.indexOf('<http');
+					linkEndIndex = text.indexOf('>', linkStartIndex)+1;
+
+					var link = text.substring(linkStartIndex, linkEndIndex);
+					startIndex += (linkStartIndex + text.indexOf('>')+1);
+
+					//extract the link portion
+					var linkProc = {};
+					linkProc.url = link.substr(1, link.indexOf('|')-1);
+					linkProc.text = link.substring(link.indexOf('|')+1, link.length-1);
+
+					var linkHTML = "<a href='" + linkProc.url + "' target='_blank'>" + linkProc.text + "</a>";
+
+					text = text.replace(link, linkHTML);
+				}
+			}
+
+			return text;
 		}
 	};
  

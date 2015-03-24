@@ -5,6 +5,10 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.1 - added support for links posted from slack
+     - added option defaultUserImg, an image link - will be shown if the userImg parameter is blank
+     - responsive layouts
+     
 v1.0 - Initial commit
 
 ### Requirements
@@ -122,6 +126,10 @@ Default: 75
 Shows a few debug messages if set to true.
 
 Default: false
+
+**defaultUserImg**
+
+The image link to use if the userImg parameter is '' for a message.
 
 ### Try it yourself here
 Try a demo here. http://slack-chat.improvi.in
