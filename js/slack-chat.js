@@ -1,6 +1,8 @@
 /*SlackChat*/
-/* v1.1.2 */
+/* v1.1.3 */
 (function( $ ) {
+
+	var mainOptions = {};
 
 	var methods = {
 		init: function (options) {
@@ -23,8 +25,11 @@
 	            elementToDisable: null,
 	            heightOffset: 75,
 	            debug: false,
-	            defaultUserImg: ''
-            };
+	            defaultUserImg: '',
+	            webCache: false,
+	            privateChannel: false,
+	            privateChannelId: false
+	        };
 
 			this._options = $.extend(true, {}, this._defaults, options);
 
@@ -35,6 +40,8 @@
             	console.log('This object :');
             	console.log(this);
             }
+
+            mainOptions = this._options;
 
             //validate the params
             if(this._options.apiToken == '') methods.validationError('Parameter apiToken is required.');
@@ -71,20 +78,38 @@
 			$(this).on('click', function () {
 				//set the height of the messages box
 				$('.slack-chat-box').show();
+				$('.slack-chat-box').addClass('open');
 				$('.slack-message-box').height($('.slack-chat-box').height() - $('.desc').height() - $('.send-area').height() - parseInt($this._options.heightOffset));
 
-				methods.querySlack($this, $this._options);
-
-				$this._options.queryIntElem = setInterval(function () {
-					methods.querySlack($this, $this._options);
-				}, $this._options.queryInterval);
+				!function querySlackChannel(){
+					if($('.slack-chat-box').hasClass('open')) {
+						methods.querySlack($this);
+						setTimeout(querySlackChannel,  $this._options.queryInterval);
+					}
+				 
+				}();
 
 				$('.slackchat .slack-new-message').focus();
+				
+				if($this._options.webCache) {
+					//store the values in the webcache
+					var scParams =  {
+						apiToken: mainOptions.apiToken
+						,channelId: mainOptions.channelId
+						,user: mainOptions.user
+						,sysUser: mainOptions.sysUser
+						,botUser: mainOptions.botUser
+					};
+
+					localStorage.scParams = JSON.stringify(scParams);
+				}
+
 			});
 
 			//2. close the chat box
 			$('.slackchat .slack-chat-close').on('click', function () {
 				$('.slack-chat-box').slideUp();
+				$('.slack-chat-box').removeClass('open');
 
 				//clear the interval
 				clearInterval($this._options.queryIntElem);
@@ -114,94 +139,100 @@
 		},
 
 		querySlack: function ($elem) {
-			options = $elem._options;
+			options = mainOptions;
 
-			$.ajax({
-				url: 'https://slack.com/api/channels.history'
-				,type: "POST"
-				,dataType: 'json'
-				,data: {
-					token: options.apiToken
-					,channel: options.channelId
-					,oldest: options.latest
-					,count: options.messageFetchCount
-				}
-				,success: function (resp) {
+			methods.createChannel($elem, function (channel) {
+				mainOptions.channelId = channel.id;
 
-					if(options.debug && resp.messages.length) console.log(resp.messages);
+				$.ajax({
+					url: 'https://slack.com/api/channels.history'
+					,type: "POST"
+					,dataType: 'json'
+					,data: {
+						token: options.apiToken
+						,channel: mainOptions.channelId
+						,oldest: mainOptions.latest
+						,count: options.messageFetchCount
+					}
+					,success: function (resp) {
 
-					if(resp.ok && resp.messages.length) {
-						var html = '';
-						options.latest = resp.messages[0].ts;
-						resp.messages = resp.messages.reverse();
+						if(options.debug && resp.messages && resp.messages.length) console.log(resp.messages);
 
-						for(var i=0; i< resp.messages.length; i++)
-						{
-							if(resp.messages[i].subtype == 'bot_message' && resp.messages[i].text !== "") {
-								
-								message = resp.messages[i];
-								var userName = '';
-								var userImg = '';
-								var msgUserId = '';
+						if(resp.ok && resp.messages.length) {
+							var html = '';
+							mainOptions.latest = resp.messages[0].ts;
+							resp.messages = resp.messages.reverse();
 
-								if(message.attachments)
-								{
-									userName = message.attachments[0].author_name;
-									userImg = message.attachments[0].author_icon;
+							for(var i=0; i< resp.messages.length; i++)
+							{
+								if(resp.messages[i].subtype == 'bot_message' && resp.messages[i].text !== "") {
+									
+									message = resp.messages[i];
+									var userName = '';
+									var userImg = '';
+									var msgUserId = '';
+
+									if(message.attachments)
+									{
+										userName = message.attachments[0].author_name;
+										userImg = message.attachments[0].author_icon;
+									}
+
+									if(message.fields)
+										msgUserId = message.fields[0].value;
+
+									var messageText = methods.checkforLinks(message.text.trim());
+
+									html += "<div class='message-item'>";
+									if(userImg !== '' && typeof userImg !== 'undefined')
+										html += "<div class='userImg'><img src='" + userImg + "' /></div>";
+									else if(options.defaultUserImg !== '')
+										html += "<div class='userImg'><img src='" + options.defaultUserImg + "' /></div>";
+									html += "<div class='msgBox'>";
+									if(msgUserId !== '')
+										html += "<div class='username'>" + (msgUserId == options.userId? "You":userName) + "</div>";
+									else
+										html += "<div class='username'>" + userName + "</div>";
+									html += "<div class='message'>" + messageText + "</div>";
+									if(typeof moment !== 'undefined')
+										html += "<div class='timestamp'>" + moment.unix(resp.messages[i].ts).fromNow() + "</div>";
+									html += "</div>";
+									html += "</div>";
 								}
+								else if(typeof resp.messages[i].subtype == 'undefined') {
 
-								if(message.fields)
-									msgUserId = message.fields[0].value;
-
-								var messageText = methods.checkforLinks(message.text.trim());
-
-								html += "<div class='message-item'>";
-								if(userImg !== '' && typeof userImg !== 'undefined')
-									html += "<div class='userImg'><img src='" + userImg + "' /></div>";
-								else if(options.defaultUserImg !== '')
-									html += "<div class='userImg'><img src='" + options.defaultUserImg + "' /></div>";
-								html += "<div class='msgBox'>";
-								if(msgUserId !== '')
-									html += "<div class='username'>" + (msgUserId == options.userId? "You":userName) + "</div>";
-								else
-									html += "<div class='username'>" + userName + "</div>";
-								html += "<div class='message'>" + messageText + "</div>";
-								if(typeof moment !== 'undefined')
-									html += "<div class='timestamp'>" + moment.unix(resp.messages[i].ts).fromNow() + "</div>";
-								html += "</div>";
-								html += "</div>";
+									message = resp.messages[i].text;
+									var userName = options.sysUser;
+									var messageText = methods.checkforLinks(message);
+									html += "<div class='message-item'>";
+									if(options.sysImg !== '')
+										html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
+									html += "<div class='msgBox'>"
+									html += "<div class='username main'>" + userName + "</div>";
+									html += "<div class='message'>" + messageText + "</div>";
+									if(typeof moment !== 'undefined')
+										html += "<div class='timestamp'>" + moment.unix(resp.messages[i].ts).fromNow() + "</div>";
+									html += "</div>";
+									html += "</div>";
+								}
 							}
-							else if(typeof resp.messages[i].subtype == 'undefined') {
-
-								message = resp.messages[i].text;
-								var userName = options.sysUser;
-								var messageText = methods.checkforLinks(message);
-								html += "<div class='message-item'>";
-								if(options.sysImg !== '')
-									html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
-								html += "<div class='msgBox'>"
-								html += "<div class='username main'>" + userName + "</div>";
-								html += "<div class='message'>" + messageText + "</div>";
-								if(typeof moment !== 'undefined')
-									html += "<div class='timestamp'>" + moment.unix(resp.messages[i].ts).fromNow() + "</div>";
-								html += "</div>";
-								html += "</div>";
-							}
+							$('.slack-message-box').append(html);
+							
+							//scroll to the bottom
+							$('.slack-message-box').stop().animate({
+		  						scrollTop: $(".slack-message-box")[0].scrollHeight
+							}, 800);
 						}
-						$('.slack-message-box').append(html);
-						
-						//scroll to the bottom
-						$('.slack-message-box').stop().animate({
-	  						scrollTop: $(".slack-message-box")[0].scrollHeight
-						}, 800);
+						else if(!resp.ok)
+						{
+							console.log('[SlackChat] Query failed with errors: ');
+							console.log(resp);
+						}
 					}
-					else if(!resp.ok)
-					{
-						console.log('[SlackChat] Query failed with errors: ');
-						console.log(resp);
-					}
-				}
+				});
 			});
+
+			
 		},
 
 		postMessage: function ($elem) {
@@ -238,7 +269,7 @@
 				,dataType: 'json'
 				,data: {
 					token: options.apiToken
-					,channel: options.channelId
+					,channel: mainOptions.channelId
 					,text: message
 					,username: options.botUser
 					,attachments: JSON.stringify([attachment])
@@ -294,9 +325,10 @@
 												$('.slackchat .presence').addClass('active');
 												$('.slackchat .presence .presence-text').text('Available');
 												if(options.disableIfAway && options.elementToDisable !== null) options.elementToDisable.show();
+												active = true;
 												return true;
 											}
-											else {
+											else if(!active) {
 												$('.slackchat .presence').removeClass('active');
 												$('.slackchat .presence .presence-text').text('Away');
 											}
@@ -332,8 +364,17 @@
 
 					//extract the link portion
 					var linkProc = {};
-					linkProc.url = link.substr(1, link.indexOf('|')-1);
-					linkProc.text = link.substring(link.indexOf('|')+1, link.length-1);
+					if(link.indexOf('|')) {
+
+						linkProc.url = link.substr(1, link.indexOf('|')-1);
+						linkProc.text = link.substring(link.indexOf('|')+1, link.length-1);	
+					}
+					else {
+
+						linkProc.url = link.substr(1, link.indexOf('>')-1);
+						linkProc.text = link.substring(link.indexOf('>')+1, link.length-1);
+						linkProc.text =linkProc.url;
+					}
 
 					var linkHTML = "<a href='" + linkProc.url + "' target='_blank'>" + linkProc.text + "</a>";
 
@@ -342,6 +383,45 @@
 			}
 
 			return text;
+		}
+
+		,createChannel: function($elem, callback) {
+
+			var options = $elem._options;
+
+			if(options.privateChannelId) {
+
+				var channel = {
+					id: options.privateChannelId
+				};
+
+				callback(channel);
+				
+				return false;
+			}
+
+			var privateChannelName = options.user + '' + (Math.random()*10000000);		
+
+			$.ajax({
+				url: 'https://slack.com/api/channels.create'
+				,dataType: 'json'
+				,type: "POST"
+				,data: {
+					token: options.apiToken
+					,name: privateChannelName
+				}
+				,success: function (resp) {
+					if(resp.ok) {
+						mainOptions.privateChannelId = resp.channel.id;
+						callback(resp.channel);
+					}
+
+					return false;
+				}
+				,error: function () {
+					return false;
+				}
+			});
 		}
 	};
  

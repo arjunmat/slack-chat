@@ -4,7 +4,7 @@
 		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet" />
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 		<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
-		<link href="/css/slack.css" rel="stylesheet" />
+		<link href="/css/slack-chat.css" rel="stylesheet" />
 		<link href="/css/demo.css" rel="stylesheet" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>SlackChat</title>
@@ -30,7 +30,8 @@
 					  <div class="form-group">
 					    <label for="apiToken" class="col-sm-3 control-label">Slack API Token:</label>
 					    <div class="col-sm-9">
-					      <input type="text" class="form-control" id="apiToken" placeholder="apiToken" required="required" value="">
+					      <input type="text" class="form-control" id="apiToken" placeholder="apiToken" required="required" value="" />
+					      <div class="help-text">Generate your Slack token <a href="https://api.slack.com/web" target="_blank">here</a>.</div>
 					    </div>
 					  </div>
 
@@ -38,27 +39,29 @@
 					    <label for="channelId" class="col-sm-3 control-label">Slack Channel ID:</label>
 					    <div class="col-sm-9">
 					      <input type="text" class="form-control" id="channelId" placeholder="Required"  required="required" value="">
+					      <div class="help-text"><a href="javascript:void(0);" id="listChannels">Click here</a> to list your channels.</div>
+					      <div class="well channel-list" style="display:none;"></div>
 					    </div>
 					  </div>
 
 					  <div class="form-group">
 					    <label for="user" class="col-sm-3 control-label">Username:</label>
 					    <div class="col-sm-9">
-					      <input type="text" class="form-control" id="user" placeholder="Required"  required="required" value="">
+					      <input type="text" class="form-control" id="user" placeholder="Required"  required="required" value="DemoUser">
 					    </div>
 					  </div>
 
 					  <div class="form-group">
 					    <label for="sysUser" class="col-sm-3 control-label">Support Name:</label>
 					    <div class="col-sm-9">
-					      <input type="text" class="form-control" id="sysUser" placeholder="Required"  required="required" value="">
+					      <input type="text" class="form-control" id="sysUser" placeholder="Required"  required="required" value="SlackChatDemo">
 					    </div>
 					  </div>
 
 					  <div class="form-group">
 					    <label for="botUser" class="col-sm-3 control-label">Bot User Name:</label>
 					    <div class="col-sm-9">
-					      <input type="text" class="form-control" id="botUser" placeholder="Required"  required="required" value="">
+					      <input type="text" class="form-control" id="botUser" placeholder="Required"  required="required" value="DemoBot">
 					    </div>
 					  </div>
 					  
@@ -72,7 +75,7 @@
 				</div>
 			</div>
 			<footer class='center-txt'>
-				Made with <i class="fa fa-fw fa-heart"></i> by <a href='mailto:arjun.mathai@gmail.com'>Arjun Mathai</a>
+				Made with <i class="fa fa-fw fa-heart"></i> by <a href='http://www.improvi.in'>Improvi Technologies</a>
 			</footer>
 		</div>
 		<div class="message-box" data-toggle="tooltip" title="Need help?">
@@ -83,7 +86,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 		<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-		<script type="text/javascript" src="/js/slack-chat.min.js"></script>
+		<script type="text/javascript" src="/js/slack-chat.js"></script>
 		<script>
 			$(document).ready(function () {
 
@@ -105,12 +108,15 @@
 						,user: $('#user').val()
 						,userLink: 'http://www.google.com'
 						,userId: 'TEST-USER'
-						,userImg: window.location.href + 'user-icon-small.jpg'
-						,sysImg: window.location.href + 'improvi.png'
+						,userImg: window.location.href + '/img/user-icon-small.jpg'
+						,sysImg: window.location.href + '/img/improvi.png'
 						,sysUser: $('#sysUser').val()
 						,botUser: $('#botUser').val()
 						,elementToDisable: $('.message-box')
 						,disableIfAway: false
+						,webCache: true
+						,debug:false
+						,privateChannel: true
 					};
 
 					$('.message-box > a').slackChat(slackChatOptions);
@@ -120,6 +126,60 @@
 					return false;
 
 				});
+
+				//load from localStorage
+				for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+
+					if(localStorage.key(i) == 'scParams') {
+						var scParams = JSON.parse(localStorage.getItem( localStorage.key( i ) ));
+
+						if(scParams.apiToken) $('#apiToken').val(scParams.apiToken);
+						if(scParams.channelId) $('#channelId').val(scParams.channelId);
+						if(scParams.user) $('#user').val(scParams.user);
+						if(scParams.sysUser) $('#sysUser').val(scParams.sysUser);
+						if(scParams.botUser) $('#botUser').val(scParams.botUser);
+					}
+				}
+
+				//load the channels
+				$('#listChannels').on("click", function () {
+					$('.channel-list').html('').hide();
+
+					if($('#apiToken').val() == '') {
+						$('.channel-list').html("Invalid Slack API Token").show();
+						return false;
+					}
+
+					$.ajax({
+						url: "https://slack.com/api/channels.list"
+						,type: "POST"
+						,dataType: "json"
+						,data: {
+							token: $('#apiToken').val()
+						}
+						,success: function (resp) {
+							if(resp.ok) {
+								if(resp.channels.length) {
+									var html = "<table class='table table-condensed table-striped table-bordered'><tr><th>Channel Name</td><td>Channel ID</td>";
+									for(var i=0; i< resp.channels.length;i++) {
+										if(!resp.channels[i].is_archived)
+											html += "<tr><td>" + resp.channels[i].name + "</td><td><span class='channel-id'>" + resp.channels[i].id + "</span><a class='btn btn-xs btn-danger use-channel pull-right'>Use</a></td>";
+									}
+									html += "</table>";
+									$('.channel-list').html(html).show();
+
+									$('.use-channel').off('click');
+									$('.use-channel').on('click', function () {
+										$('#channelId').val($(this).parent().find('.channel-id').text());
+									});
+								}
+								else
+									$('.channel-list').html("No channels found").show();	
+							}
+						}
+					});	
+				});
+				
 			});
 		</script>
 	</body>

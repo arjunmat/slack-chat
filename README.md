@@ -5,13 +5,17 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
-v1.1 - added support for links posted from slack
+v1.2
+> 1. bug fixes and performance improvements
+> 2. Added support for webCache and privateChannel
 
-     - added option defaultUserImg, an image link - will be shown if the userImg parameter is blank
-     
-     - responsive layouts
+v1.1
+> 1. added support for links posted from slack
+> 2. added option defaultUserImg, an image link - will be shown if the userImg parameter is blank
+> 3. responsive layouts
 
-v1.0 - Initial commit
+v1.0
+> 1. Initial commit
 
 ### Requirements
 Slack-Chat requires MomentJS. (http://momentjs.com)
@@ -39,7 +43,8 @@ var slackChatOptions = {
 	            elementToDisable: null,
 	            heightOffset: 75,
 	            debug: false,
-	            defaultUserImg: ''
+	            defaultUserImg: '',
+	            webCache: false
 }
 
 $(<elem>).slackChat(slackChatOptions);
@@ -133,6 +138,30 @@ Default: false
 **defaultUserImg**
 
 The image link to use if the userImg parameter is '' for a message.
+
+**webCache**
+
+A few options will be cached in the client for debugging/local testing. The values from the localStorage can be retrieved as follows.
+
+```javascript
+//load from localStorage
+for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+
+	if(localStorage.key(i) == 'scParams') {
+		var scParams = JSON.parse(localStorage.getItem( localStorage.key( i ) ));
+
+		$('#apiToken').val(scParams.apiToken);
+		$('#channelId').val(scParams.channelId);
+		$('#user').val(scParams.user);
+		$('#sysUser').val(scParams.sysUser);
+		$('#botUser').val(scParams.botUser);
+	}
+}
+```
+
+**privateChannel**
+
+Create a private channel for the support, instead of a common channel.
 
 ### Try it yourself here
 Try a demo here. http://slack-chat.improvi.in
