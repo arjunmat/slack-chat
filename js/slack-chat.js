@@ -389,6 +389,16 @@
 
 			var options = $elem._options;
 
+			if(!options.privateChannel) {
+				var channel = {
+					id: options.channelId
+				};
+
+				callback(channel);
+				
+				return false;				
+			}
+
 			if(options.privateChannelId) {
 
 				var channel = {
