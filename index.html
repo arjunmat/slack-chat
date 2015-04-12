@@ -69,7 +69,9 @@
                 disableIfAway: false,
                 elementToDisable: null,
                 heightOffset: 75,
-                debug: false
+                debug: false,
+                webCache: false,
+                privateChannel: false
 }
 
 $(&lt;elem&gt;).slackChat(slackChatOptions);
@@ -161,6 +163,34 @@ $(&lt;elem&gt;).slackChat(slackChatOptions);
 <p>Shows a few debug messages if set to true.</p>
 
 <p>Default: false</p>
+
+<p><strong>webCache</strong></p>
+
+<p>A few options will be cached in the client for debugging/local testing. The values from the localStorage can be retrieved as follows.</p>
+
+<code>
+//load from localStorage
+for ( var i = 0, len = localStorage.length; i < len; ++i ) {
+
+	if(localStorage.key(i) == 'scParams') {
+		var scParams = JSON.parse(localStorage.getItem( localStorage.key( i ) ));
+
+		$('#apiToken').val(scParams.apiToken);
+		$('#channelId').val(scParams.channelId);
+		$('#user').val(scParams.user);
+		$('#sysUser').val(scParams.sysUser);
+		$('#botUser').val(scParams.botUser);
+	}
+}
+</code>
+
+<p>Default: false</p>
+
+<p><strong>privateChannel</strong></p>
+
+<p>Create a private channel on #Slack when the user initializes SlackChat window. Parameter user must be passed when using this option.</p>
+
+<p>Default:false</p>
 
 <h3>
 <a id="try-it-yourself-here" class="anchor" href="#try-it-yourself-here" aria-hidden="true"><span class="octicon octicon-link"></span></a>Try it yourself here</h3>
