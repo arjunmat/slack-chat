@@ -49,6 +49,13 @@ footer {
 	color: #fff;
 }
 
+.message-box > a .slack-message-count {
+	position: absolute;
+  	top: 0;
+  	right: -5px;
+	display: none;
+}
+
 @media screen and (max-width: 768px) {
 	.message-box {
 		bottom: 25px;

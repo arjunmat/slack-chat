@@ -81,6 +81,7 @@
 		<div class="message-box" data-toggle="tooltip" title="Need help?">
 			<a href="javascript:void(0);" class="message-box-icon">
 				<i class="fa fa-fw fa-question-circle"></i>
+				<div class="badge badge-danger slack-message-count"></div>
 			</a>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -108,8 +109,8 @@
 						,user: $('#user').val()
 						,userLink: 'http://www.google.com'
 						,userId: 'TEST-USER'
-						,userImg: window.location.href + '/img/user-icon-small.jpg'
-						,sysImg: window.location.href + '/img/improvi.png'
+						,userImg: '/img/user-icon-small.jpg'
+						,sysImg: '/img/improvi.png'
 						,sysUser: $('#sysUser').val()
 						,botUser: $('#botUser').val()
 						,elementToDisable: $('.message-box')
@@ -117,6 +118,7 @@
 						,webCache: true
 						,debug:false
 						,privateChannel: true
+						,badgeElement: '.slack-message-count'
 					};
 
 					$('.message-box > a').slackChat(slackChatOptions);

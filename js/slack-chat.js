@@ -1,8 +1,10 @@
 /*SlackChat*/
-/* v1.1.3 */
+/* v1.1.4 */
 (function( $ ) {
 
 	var mainOptions = {};
+	
+	window.slackChat = false;
 
 	var methods = {
 		init: function (options) {
@@ -28,7 +30,9 @@
 	            defaultUserImg: '',
 	            webCache: false,
 	            privateChannel: false,
-	            privateChannelId: false
+	            privateChannelId: false,
+				isOpen: false,
+				badgeElement: false
 	        };
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -36,12 +40,9 @@
 			this._options.queryIntElem = null;
             this._options.latest = null;
 
-            if(this._options.debug) {
-            	console.log('This object :');
-            	console.log(this);
-            }
+            if(this._options.debug) console.log('This object :', this);
 
-            mainOptions = this._options;
+            window.slackChat._options = mainOptions = this._options;
 
             //validate the params
             if(this._options.apiToken == '') methods.validationError('Parameter apiToken is required.');
@@ -71,34 +72,41 @@
 
 			$('body').append(html);
 
-			var $this = this;
+			var $this = window.slackChat = this;
 
 			//register events on the chatbox
 			//1. query Slack on open
 			$(this).on('click', function () {
+				
+				//reset the badgeElement
+				if(window.slackChat._options.badgeElement)
+					$(window.slackChat._options.badgeElement).html('').hide();
+				
+				//if the private channel functionality is used, set the isOpen flag to true.
+				if(window.slackChat._options.privateChannel) window.slackChat._options.isOpen = true;
 				//set the height of the messages box
 				$('.slack-chat-box').show();
 				$('.slack-chat-box').addClass('open');
-				$('.slack-message-box').height($('.slack-chat-box').height() - $('.desc').height() - $('.send-area').height() - parseInt($this._options.heightOffset));
+				$('.slack-message-box').height($('.slack-chat-box').height() - $('.desc').height() - $('.send-area').height() - parseInt(window.slackChat._options.heightOffset));
 
 				!function querySlackChannel(){
-					if($('.slack-chat-box').hasClass('open')) {
+					if($('.slack-chat-box').hasClass('open') || window.slackChat._options.privateChannel) {
 						methods.querySlack($this);
-						setTimeout(querySlackChannel,  $this._options.queryInterval);
+						setTimeout(querySlackChannel,  window.slackChat._options.queryInterval);
 					}
 				 
 				}();
 
 				$('.slackchat .slack-new-message').focus();
 				
-				if($this._options.webCache) {
+				if(window.slackChat._options.webCache) {
 					//store the values in the webcache
 					var scParams =  {
-						apiToken: mainOptions.apiToken
-						,channelId: mainOptions.channelId
-						,user: mainOptions.user
-						,sysUser: mainOptions.sysUser
-						,botUser: mainOptions.botUser
+						apiToken: window.slackChat._options.apiToken
+						,channelId: window.slackChat._options.channelId
+						,user: window.slackChat._options.user
+						,sysUser: window.slackChat._options.sysUser
+						,botUser: window.slackChat._options.botUser
 					};
 
 					localStorage.scParams = JSON.stringify(scParams);
@@ -111,38 +119,43 @@
 				$('.slack-chat-box').slideUp();
 				$('.slack-chat-box').removeClass('open');
 
-				//clear the interval
-				clearInterval($this._options.queryIntElem);
+				//clear the interval if the private channel feature is off
+				if(!window.slackChat._options.privateChannel)
+					clearInterval(window.slackChat._options.queryIntElem);
+				//do not clear the interval if the private Channel feature is on. This allows the user to be shown notifications if there are new replies from the support team.
+				else {
+					window.slackChat._options.isOpen = false;
+				}
 			});
 
 
 			//3. post message to slack
 			$('.slackchat .slack-post-message').click(function () {
-				methods.postMessage($this, $this._options);
+				methods.postMessage(window.slackChat, window.slackChat._options);
 			});
 
 			//4. bind the enter key to the text box
 			$('.slackchat .slack-new-message').keyup(function(e) {
-				if($this._options.sendOnEnter)
+				if(window.slackChat._options.sendOnEnter)
 				{
 			   		var code = (e.keyCode ? e.keyCode : e.which);
 			 		if(code == 13) 
 			 		{
-			 			methods.postMessage($this, $this._options);
+			 			methods.postMessage(window.slackChat, window.slackChat._options);
 			 			e.preventDefault();
 			 		}
 			 	}
 			});
 
 			//get user online/offline status
-			methods.getUserPresence($this, $this._options);
+			methods.getUserPresence(window.slackChat, window.slackChat._options);
 		},
 
 		querySlack: function ($elem) {
-			options = mainOptions;
+			options = window.slackChat._options;
 
 			methods.createChannel($elem, function (channel) {
-				mainOptions.channelId = channel.id;
+				window.slackChat._options.channelId = channel.id;
 
 				$.ajax({
 					url: 'https://slack.com/api/channels.history'
@@ -160,8 +173,10 @@
 
 						if(resp.ok && resp.messages.length) {
 							var html = '';
-							mainOptions.latest = resp.messages[0].ts;
+							window.slackChat._options.latest = resp.messages[0].ts;
 							resp.messages = resp.messages.reverse();
+							
+							var repliesExist = 0;
 
 							for(var i=0; i< resp.messages.length; i++)
 							{
@@ -201,6 +216,9 @@
 								}
 								else if(typeof resp.messages[i].subtype == 'undefined') {
 
+									//support replies exist
+									repliesExist++;
+									
 									message = resp.messages[i].text;
 									var userName = options.sysUser;
 									var messageText = methods.checkforLinks(message);
@@ -222,6 +240,12 @@
 							$('.slack-message-box').stop().animate({
 		  						scrollTop: $(".slack-message-box")[0].scrollHeight
 							}, 800);
+							
+							//support team has replied and the chat box is closed
+							if(repliesExist > 0 && window.slackChat._options.isOpen === false && window.slackChat._options.badgeElement) {
+								$(window.slackChat._options.badgeElement).html(repliesExist).show();
+								
+							}
 						}
 						else if(!resp.ok)
 						{
@@ -254,6 +278,9 @@
                     "short": true
 				}
 			];
+			
+			//do not send the message if the value is empty
+			if($('.slack-new-message').val().trim() === '') return false;
 
 			message = $('.slack-new-message').val();
 			$('.slack-new-message').val('');
@@ -269,7 +296,7 @@
 				,dataType: 'json'
 				,data: {
 					token: options.apiToken
-					,channel: mainOptions.channelId
+					,channel: window.slackChat._options.channelId
 					,text: message
 					,username: options.botUser
 					,attachments: JSON.stringify([attachment])
@@ -410,10 +437,10 @@
 				return false;
 			}
 
-			var privateChannelName = options.user + '' + (Math.random()*10000000);		
+			var privateChannelName = options.user + '-' + options.userId?options.userId:(Math.random()*100000);		
 
 			$.ajax({
-				url: 'https://slack.com/api/channels.create'
+				url: 'https://slack.com/api/channels.join'
 				,dataType: 'json'
 				,type: "POST"
 				,data: {
@@ -422,8 +449,11 @@
 				}
 				,success: function (resp) {
 					if(resp.ok) {
-						mainOptions.privateChannelId = resp.channel.id;
+						options.privateChannelId = window.slackChat._options.privateChannelId = resp.channel.id;
 						callback(resp.channel);
+					}
+					else if(resp.error == "name_taken") {
+						
 					}
 
 					return false;
