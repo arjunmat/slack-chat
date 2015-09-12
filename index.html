@@ -43,6 +43,23 @@
 					      <div class="well channel-list" style="display:none;"></div>
 					    </div>
 					  </div>
+					  <div class="form-group">
+    					<div class="col-sm-offset-3 col-sm-9">
+					  		<div class="checkbox">
+    							<label>
+      								<input type="checkbox" id="usePrivateChannel"> Use Private Channel <small> |  <b>Note: *</b> Bot User does not work with private channels.</small>
+    							</label>
+  					  		</div>
+						</div>
+					  </div>
+					  
+					  <div class="form-group hide" id="serverApi">
+					    <label for="serverApiGateway" class="col-sm-3 control-label">Server API Gateway:</label>
+					    <div class="col-sm-9">
+					      <input type="text" class="form-control" id="serverApiGateway" placeholder="Required" value="">
+					    </div>
+					  </div>
+					
 
 					  <div class="form-group">
 					    <label for="user" class="col-sm-3 control-label">Username:</label>
@@ -117,9 +134,14 @@
 						,disableIfAway: false
 						,webCache: true
 						,debug:false
-						,privateChannel: true
+						,privateChannel: false
 						,badgeElement: '.slack-message-count'
+						
 					};
+					
+					if($('#usePrivateChannel').prop('checked'))
+						slackChatOptions.privateChannel = true;
+						slackChatOptions.serverApiGateway = $('#serverApiGateway').val();
 
 					$('.message-box > a').slackChat(slackChatOptions);
 
@@ -140,6 +162,7 @@
 						if(scParams.user) $('#user').val(scParams.user);
 						if(scParams.sysUser) $('#sysUser').val(scParams.sysUser);
 						if(scParams.botUser) $('#botUser').val(scParams.botUser);
+						if(scParams.serverApiGateway) $('#serverApiGateway').val(scParams.serverApiGateway);
 					}
 				}
 
@@ -172,7 +195,10 @@
 
 									$('.use-channel').off('click');
 									$('.use-channel').on('click', function () {
+												
 										$('#channelId').val($(this).parent().find('.channel-id').text());
+										$('.channel-list').hide();
+									
 									});
 								}
 								else
@@ -182,6 +208,14 @@
 					});	
 				});
 				
+				$('#usePrivateChannel').on('change', function () {
+					if($(this).prop('checked')) {
+						$("#serverApi").removeClass("hide");
+					}
+					else {
+						$("#serverApi").addClass("hide");
+					}
+				});
 			});
 		</script>
 	</body>

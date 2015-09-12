@@ -32,7 +32,8 @@
 	            privateChannel: false,
 	            privateChannelId: false,
 				isOpen: false,
-				badgeElement: false
+				badgeElement: false,
+				serverApiGateway: "/server/php/server.php"
 	        };
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -46,7 +47,7 @@
 
             //validate the params
             if(this._options.apiToken == '') methods.validationError('Parameter apiToken is required.');
-            if(this._options.channelId == '') methods.validationError('Parameter channelId is required.');
+            if(this._options.channelId == '' && !this._options.privateChannel) methods.validationError('Parameter channelId is required.');
             if(this._options.user == '') methods.validationError('Parameter user is required.');
             if(this._options.sysUser == '') methods.validationError('Parameter sysUser is required.');
             if(this._options.botUser == '') methods.validationError('Parameter botUser is required.');
@@ -65,7 +66,7 @@
 			html += '<div class="slack-message-box">';
 			html += '</div>';
 			html += '<div class="send-area">';
-			html += '<textarea class="form-control slack-new-message" type="text" placeholder="Write a message..."></textarea>';
+			html += '<textarea class="form-control slack-new-message" disabled="disabled" type="text" placeholder="Hang tight while we connect..."></textarea>';
 			html += '<div class="slack-post-message"><i class="fa fa-fw fa-chevron-right"></i></div>';
 			html += '</div>';
 			html += '</div>';
@@ -156,7 +157,9 @@
 
 			methods.createChannel($elem, function (channel) {
 				window.slackChat._options.channelId = channel.id;
-
+				
+				$('.slack-new-message').prop('disabled', false).prop('placeholder', 'Write a message...');
+				
 				$.ajax({
 					url: 'https://slack.com/api/channels.history'
 					,type: "POST"
@@ -437,23 +440,19 @@
 				return false;
 			}
 
-			var privateChannelName = options.user + '-' + options.userId?options.userId:(Math.random()*100000);		
-
+			var privateChannelName = options.user + '-' + (options.userId?options.userId:(Math.random()*100000));		
+			
 			$.ajax({
-				url: 'https://slack.com/api/channels.join'
+				url: options.serverApiGateway
 				,dataType: 'json'
 				,type: "POST"
 				,data: {
-					token: options.apiToken
-					,name: privateChannelName
+					channelName: privateChannelName
 				}
 				,success: function (resp) {
 					if(resp.ok) {
-						options.privateChannelId = window.slackChat._options.privateChannelId = resp.channel.id;
-						callback(resp.channel);
-					}
-					else if(resp.error == "name_taken") {
-						
+						options.privateChannelId = window.slackChat._options.privateChannelId = resp.data.id;
+						callback(resp.data);
 					}
 
 					return false;
