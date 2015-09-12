@@ -4,6 +4,9 @@ Slack-Chat is a jQuery plugin that integrates a support chat system with your we
 When users send a message, it will show up as a chat in the Channel specified by you.
 
 ### Changelog
+v1.3
+> 1. Added server PHP example and documentation for Private Channels
+> 2. Disabled the textbox while connecting to slackchat
 
 v1.2
 > 1. bug fixes and performance improvements

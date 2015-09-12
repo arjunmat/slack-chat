@@ -7,8 +7,7 @@
 	*/
 
 	define('SLACK_API_URL', 'https://slack.com/api/channels.join');
-	//define('SLACK_API_USER_TOKEN', '<Replace with your #Slack token>');
-	define('SLACK_API_USER_TOKEN', 'xoxp-4087847681-4087847683-4398590680-ca0b75');
+	define('SLACK_API_USER_TOKEN', '<Replace with your #Slack token>');
 
 	$channelName = $_POST['channelName'];
 	
