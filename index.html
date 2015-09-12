@@ -44,6 +44,11 @@
 <p>Slack-Chat requires MomentJS. (<a href="http://momentjs.com">http://momentjs.com</a>)</p>
 
 <h3>
+<a id="warning" class="anchor" href="#warning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Warning</h3>
+		  
+<p>Do not use your User token in the SlackChat client side. Access to a user token can grant a user complete access to your Slack account. We recommend creating a <a href="https://waggleindia.slack.com/services/new/bot" target="_blank">Bot User</a> which has limited access to the Slack account.</p>
+		  
+<h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
 <ol>
@@ -52,7 +57,7 @@
 </ol>
 
 <pre><code>var slackChatOptions = {
-                apiToken: '',           //#Slack Auth token. Required. 
+                apiToken: '',       //#Slack Auth token. Required. 
                 channelId: '',      //#Slack channel ID. Required.
                 user: '',           //name of the user. Required.
                 userLink: '',       //link to the user in the application - shown in #Slack
@@ -71,7 +76,8 @@
                 heightOffset: 75,
                 debug: false,
                 webCache: false,
-                privateChannel: false
+                privateChannel: false,
+				serverApiGateway: '/server/php/server.php' 
 }
 
 $(&lt;elem&gt;).slackChat(slackChatOptions);
@@ -192,12 +198,19 @@ for ( var i = 0, len = localStorage.length; i < len; ++i ) {
 
 <p>Default:false</p>
 	
+<p><strong>serverApiGateway</strong></p>
+
+<p>Your server implementation. See /server/php/server.php for a sample implementation.</p>
+
+<p>Default:false</p>
+
+	
 <p><strong>badgeElement</strong></p>
 
 <p>A class or id where the unread notifications must be shown. Ideally, this must be within the SlackChat invocation element and absolutely positioned. This is relevant only when privateChannel is enabled.</p>
 
 <p>Default:false</p>
-
+	
 <h3>
 <a id="try-it-yourself-here" class="anchor" href="#try-it-yourself-here" aria-hidden="true"><span class="octicon octicon-link"></span></a>Try it yourself here</h3>
 
