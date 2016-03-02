@@ -199,7 +199,7 @@
 									if(message.fields)
 										msgUserId = message.fields[0].value;
 
-									var messageText = methods.checkforLinks(message.text.trim());
+									var messageText = methods.formatMessage(message.text.trim());
 
 									html += "<div class='message-item'>";
 									if(userImg !== '' && typeof userImg !== 'undefined')
@@ -224,7 +224,7 @@
 									
 									message = resp.messages[i].text;
 									var userName = options.sysUser;
-									var messageText = methods.checkforLinks(message);
+									var messageText = methods.formatMessage(message);
 									html += "<div class='message-item'>";
 									if(options.sysImg !== '')
 										html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
@@ -236,7 +236,8 @@
 									html += "</div>";
 									html += "</div>";
 								}
-							}
+						}
+
 							$('.slack-message-box').append(html);
 							
 							//scroll to the bottom
@@ -378,44 +379,17 @@
 			$('.slackchat').remove();
 		},
 
-		checkforLinks: function (text) {
-			var regex = /.*<[a-zA-Z0-9\/:\-.]+|[a-zA-Z0-9\/:\-.]+>.*/;
-			var startIndex = 0;
+		formatMessage: function (text) {
+			return text
+			// <URL>
+			.replace(/<(.+?)>/g, '<a href="$1" target="_blank">$1</a>') // <URL>
+			// `code`
+			.replace(/`(.+?)`/g, function(_, code) {
+				return $('<code>').text(code).prop('outerHTML');
+			});
+		},
 
-			if(regex.test(text))
-			{
-				while(startIndex <= text.indexOf('<http'))
-				{
-					linkStartIndex = text.indexOf('<http');
-					linkEndIndex = text.indexOf('>', linkStartIndex)+1;
-
-					var link = text.substring(linkStartIndex, linkEndIndex);
-					startIndex += (linkStartIndex + text.indexOf('>')+1);
-
-					//extract the link portion
-					var linkProc = {};
-					if(link.indexOf('|')) {
-
-						linkProc.url = link.substr(1, link.indexOf('|')-1);
-						linkProc.text = link.substring(link.indexOf('|')+1, link.length-1);	
-					}
-					else {
-
-						linkProc.url = link.substr(1, link.indexOf('>')-1);
-						linkProc.text = link.substring(link.indexOf('>')+1, link.length-1);
-						linkProc.text =linkProc.url;
-					}
-
-					var linkHTML = "<a href='" + linkProc.url + "' target='_blank'>" + linkProc.text + "</a>";
-
-					text = text.replace(link, linkHTML);
-				}
-			}
-
-			return text;
-		}
-
-		,createChannel: function($elem, callback) {
+		createChannel: function($elem, callback) {
 
 			var options = $elem._options;
 
