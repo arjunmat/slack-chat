@@ -1,5 +1,9 @@
 /* Slack Chat CSS */
 /* v1.1 */
+.slackchat * {
+	box-sizing: border-box;
+}
+
 .slackchat.slack-chat-box {
 	display: none;
 	position: fixed;
@@ -17,15 +21,24 @@
 
 .slackchat .slack-chat-header {
 	font-weight: 600;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	padding: 10px;
 }
 
 .slackchat .slack-message-box {
 	font-size: 12px;
-	border-bottom: 1px solid #ddd;
 	border-top: 1px solid #ddd;
-	margin: 10px 0;
-	padding: 10px 0;
-  	overflow: auto;
+	padding: 10px;
+	overflow: auto;
+	position: absolute;
+	bottom: 75px;
+	top: 60px;
+	left: 0;
+	right: 0;
 }
 
 .slackchat .slack-new-message {
@@ -52,10 +65,10 @@
 	border-radius: 50%;
 	padding: 5px;
 	height: 30px;
-  	width: 30px;
-  	text-align: center;
-  	display: inline-block;
-  	vertical-align: top;
+	width: 30px;
+	text-align: center;
+	display: inline-block;
+	vertical-align: top;
 	margin-top: 10px;
 	margin-left: 10px;
 }
@@ -157,4 +170,15 @@
 	.slackchat .slack-chat-header {
 		font-size: 13px;
 	}
+}
+
+.slackchat .send-area {
+	height: 75px;
+	display: block;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-top: 1px solid #ddd;
+	padding: 10px;
 }
