@@ -382,9 +382,18 @@
 		formatMessage: function (text) {
 			return text
 			// <URL>
-			.replace(/<(.+?)>/g, '<a href="$1" target="_blank">$1</a>') // <URL>
+			.replace(/<(.+?)(\|(.*?))?>/g, function(match, url, _text, text) {
+				if (!text) text = url;
+				return $('<a>')
+				.attr({
+					href: url,
+					target: '_blank'
+				})
+				.text(text)
+				.prop('outerHTML');
+			})
 			// `code`
-			.replace(/`(.+?)`/g, function(_, code) {
+			.replace(/`(.+?)`/g, function(match, code) {
 				return $('<code>').text(code).prop('outerHTML');
 			});
 		},
