@@ -3,6 +3,7 @@
 (function( $ ) {
 
 	var mainOptions = {};
+	var userList;
 	
 	window.slackChat = false;
 
