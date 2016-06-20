@@ -9,32 +9,32 @@
 	var methods = {
 		init: function (options) {
 			this._defaults = {
-                apiToken: '',		//#Slack token
-	            channelId: '',		//#Slack channel ID
-	            user: '',			//name of the user
-	            userLink: '', 		//link to the user in the application - shown in #Slack
-	            userImg: '',		//image of the user
-	            userId: '',			//id of the user in the application
-	            sysImg: '',			//image to show when the support team replies
-	            sysUser: '',
-	            queryInterval: 3000,
-	            chatBoxHeader: "Need help? Talk to our support team right here",
-	            slackColor: "#36a64f",
-	            messageFetchCount: 100,
-	            botUser: '',		//username to post to #Slack
-	            sendOnEnter: true,
-	            disableIfAway: false,
-	            elementToDisable: null,
-	            heightOffset: 75,
-	            debug: false,
-	            defaultUserImg: '',
-	            webCache: false,
-	            privateChannel: false,
-	            privateChannelId: false,
+        apiToken: '',		//#Slack token
+        channelId: '',		//#Slack channel ID
+        user: '',			//name of the user
+        userLink: '', 		//link to the user in the application - shown in #Slack
+        userImg: '',		//image of the user
+        userId: '',			//id of the user in the application
+        sysImg: '',			//image to show when the support team replies
+        sysUser: '',
+        queryInterval: 3000,
+        chatBoxHeader: "Need help? Talk to our support team right here",
+        slackColor: "#36a64f",
+        messageFetchCount: 100,
+        botUser: '',		//username to post to #Slack
+        sendOnEnter: true,
+        disableIfAway: false,
+        elementToDisable: null,
+        heightOffset: 75,
+        debug: false,
+        defaultUserImg: '',
+        webCache: false,
+        privateChannel: false,
+        privateChannelId: false,
 				isOpen: false,
 				badgeElement: false,
 				serverApiGateway: "/server/php/server.php"
-	        };
+	   	};
 
 			this._options = $.extend(true, {}, this._defaults, options);
 
@@ -380,7 +380,11 @@
 		},
 
 		formatMessage: function (text) {
-			return text
+			
+			//hack for converting to html entities
+			var formattedText = $("<textarea/>").html(text).text();
+
+			return decodeURI(formattedText)
 			// <URL>
 			.replace(/<(.+?)(\|(.*?))?>/g, function(match, url, _text, text) {
 				if (!text) text = url;
@@ -392,10 +396,17 @@
 				.text(text)
 				.prop('outerHTML');
 			})
-			// `code`
-			.replace(/`(.+?)`/g, function(match, code) {
+			// `code block`
+			.replace(/(?:[`]{3,})(?:\n)([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:\n)(?:[`]{3,})/g, function(match, code) {
+				//console.log(match, code);
 				return $('<code>').text(code).prop('outerHTML');
-			});
+			})
+			// `code`
+			/*.replace(/(?:[`])([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:[`])`/g, function(match, code) {
+				return $('<code>').text(code).prop('outerHTML');
+			})*/
+			// new line character
+			.replace(/\n/g, "<br />");
 		},
 
 		createChannel: function($elem, callback) {
