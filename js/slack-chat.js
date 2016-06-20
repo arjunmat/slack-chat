@@ -9,32 +9,32 @@
 	var methods = {
 		init: function (options) {
 			this._defaults = {
-                apiToken: '',		//#Slack token
-	            channelId: '',		//#Slack channel ID
-	            user: '',			//name of the user
-	            userLink: '', 		//link to the user in the application - shown in #Slack
-	            userImg: '',		//image of the user
-	            userId: '',			//id of the user in the application
-	            sysImg: '',			//image to show when the support team replies
-	            sysUser: '',
-	            queryInterval: 3000,
-	            chatBoxHeader: "Need help? Talk to our support team right here",
-	            slackColor: "#36a64f",
-	            messageFetchCount: 100,
-	            botUser: '',		//username to post to #Slack
-	            sendOnEnter: true,
-	            disableIfAway: false,
-	            elementToDisable: null,
-	            heightOffset: 75,
-	            debug: false,
-	            defaultUserImg: '',
-	            webCache: false,
-	            privateChannel: false,
-	            privateChannelId: false,
+        apiToken: '',		//#Slack token
+        channelId: '',		//#Slack channel ID
+        user: '',			//name of the user
+        userLink: '', 		//link to the user in the application - shown in #Slack
+        userImg: '',		//image of the user
+        userId: '',			//id of the user in the application
+        sysImg: '',			//image to show when the support team replies
+        sysUser: '',
+        queryInterval: 3000,
+        chatBoxHeader: "Need help? Talk to our support team right here",
+        slackColor: "#36a64f",
+        messageFetchCount: 100,
+        botUser: '',		//username to post to #Slack
+        sendOnEnter: true,
+        disableIfAway: false,
+        elementToDisable: null,
+        heightOffset: 75,
+        debug: false,
+        defaultUserImg: '',
+        webCache: false,
+        privateChannel: false,
+        privateChannelId: false,
 				isOpen: false,
 				badgeElement: false,
 				serverApiGateway: "/server/php/server.php"
-	        };
+	   	};
 
 			this._options = $.extend(true, {}, this._defaults, options);
 
@@ -199,7 +199,7 @@
 									if(message.fields)
 										msgUserId = message.fields[0].value;
 
-									var messageText = methods.checkforLinks(message.text.trim());
+									var messageText = methods.formatMessage(message.text.trim());
 
 									html += "<div class='message-item'>";
 									if(userImg !== '' && typeof userImg !== 'undefined')
@@ -224,7 +224,7 @@
 									
 									message = resp.messages[i].text;
 									var userName = options.sysUser;
-									var messageText = methods.checkforLinks(message);
+									var messageText = methods.formatMessage(message);
 									html += "<div class='message-item'>";
 									if(options.sysImg !== '')
 										html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
@@ -236,7 +236,8 @@
 									html += "</div>";
 									html += "</div>";
 								}
-							}
+						}
+
 							$('.slack-message-box').append(html);
 							
 							//scroll to the bottom
@@ -378,44 +379,37 @@
 			$('.slackchat').remove();
 		},
 
-		checkforLinks: function (text) {
-			var regex = /.*<[a-zA-Z0-9\/:\-.]+|[a-zA-Z0-9\/:\-.]+>.*/;
-			var startIndex = 0;
+		formatMessage: function (text) {
+			
+			//hack for converting to html entities
+			var formattedText = $("<textarea/>").html(text).text();
 
-			if(regex.test(text))
-			{
-				while(startIndex <= text.indexOf('<http'))
-				{
-					linkStartIndex = text.indexOf('<http');
-					linkEndIndex = text.indexOf('>', linkStartIndex)+1;
+			return decodeURI(formattedText)
+			// <URL>
+			.replace(/<(.+?)(\|(.*?))?>/g, function(match, url, _text, text) {
+				if (!text) text = url;
+				return $('<a>')
+				.attr({
+					href: url,
+					target: '_blank'
+				})
+				.text(text)
+				.prop('outerHTML');
+			})
+			// `code block`
+			.replace(/(?:[`]{3,})(?:\n)([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:\n)(?:[`]{3,})/g, function(match, code) {
+				//console.log(match, code);
+				return $('<code>').text(code).prop('outerHTML');
+			})
+			// `code`
+			/*.replace(/(?:[`])([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:[`])`/g, function(match, code) {
+				return $('<code>').text(code).prop('outerHTML');
+			})*/
+			// new line character
+			.replace(/\n/g, "<br />");
+		},
 
-					var link = text.substring(linkStartIndex, linkEndIndex);
-					startIndex += (linkStartIndex + text.indexOf('>')+1);
-
-					//extract the link portion
-					var linkProc = {};
-					if(link.indexOf('|')) {
-
-						linkProc.url = link.substr(1, link.indexOf('|')-1);
-						linkProc.text = link.substring(link.indexOf('|')+1, link.length-1);	
-					}
-					else {
-
-						linkProc.url = link.substr(1, link.indexOf('>')-1);
-						linkProc.text = link.substring(link.indexOf('>')+1, link.length-1);
-						linkProc.text =linkProc.url;
-					}
-
-					var linkHTML = "<a href='" + linkProc.url + "' target='_blank'>" + linkProc.text + "</a>";
-
-					text = text.replace(link, linkHTML);
-				}
-			}
-
-			return text;
-		}
-
-		,createChannel: function($elem, callback) {
+		createChannel: function($elem, callback) {
 
 			var options = $elem._options;
 
