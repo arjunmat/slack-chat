@@ -36,26 +36,28 @@ Slack-Chat requires MomentJS. (http://momentjs.com)
 2. Call Slack-Chat on the element that triggers the chat system.
 ````
 var slackChatOptions = {
-                apiToken: '',	        //#Slack Auth token. Required. 
-	            channelId: '',		//#Slack channel ID. Required.
-	            user: '',			//name of the user. Required.
-	            userLink: '', 		//link to the user in the application - shown in #Slack
-	            userImg: '',		//image of the user
-	            userId: '',			//id of the user in the application
-	            sysImg: '',			//image to show when the support team replies
-	            sysUser: '',                //Required.   
-	            queryInterval: 3000,
-	            chatBoxHeader: "Need help? Talk to our support team right here",
-	            slackColor: "#36a64f",
-	            messageFetchCount: 100,
-	            botUser: '',		//username to post to #Slack. Required.
-	            sendOnEnter: true,
-	            disableIfAway: false,
-	            elementToDisable: null,
-	            heightOffset: 75,
-	            debug: false,
-	            defaultUserImg: '',
-	            webCache: false
+                apiToken: '',       //#Slack Auth token. Required. 
+                channelId: '',      //#Slack channel ID. Required.
+                user: '',           //name of the user. Required.
+                userLink: '',       //link to the user in the application - shown in #Slack
+                userImg: '',        //image of the user
+                userId: '',         //id of the user in the application
+                defaultSysImg: '',         //image to show when the support team replies
+                defaultSysUser: '',                //Required.   
+                queryInterval: 3000,
+                chatBoxHeader: "Need help? Talk to our support team right here",
+                slackColor: "#36a64f",
+                messageFetchCount: 100,
+                botUser: '',        //username to post to #Slack. Required.
+                sendOnEnter: true,
+                disableIfAway: false,
+                elementToDisable: null,
+                heightOffset: 75,
+                debug: false,
+                webCache: false,
+                privateChannel: false,
+				        serverApiGateway: '/server/php/server.php',
+                useUserDetails: false
 }
 
 $(<elem>).slackChat(slackChatOptions);
@@ -154,9 +156,6 @@ The image link to use if the userImg parameter is '' for a message.
 
 A few options will be cached in the client for debugging/local testing. The values from the localStorage can be retrieved as follows.
 
-**useUserDetails**
-
-Set this to true to use the support user's Slack name and image instead of options defaultSysUser and defaultSysImg
 
 ```javascript
 //load from localStorage
@@ -177,6 +176,10 @@ for ( var i = 0, len = localStorage.length; i < len; ++i ) {
 **privateChannel**
 
 Create a private channel for the support, instead of a common channel.
+
+**useUserDetails**
+
+Set this to true to use the support user's Slack name and image instead of options defaultSysUser and defaultSysImg
 
 ### Try it yourself here
 Try a demo here. http://slack-chat.improvi.in
