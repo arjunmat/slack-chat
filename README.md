@@ -4,6 +4,14 @@ Slack-Chat is a jQuery plugin that integrates a support chat system with your we
 When users send a message, it will show up as a chat in the Channel specified by you.
 
 ### Changelog
+v1.4
+> 1. Added option to use user details from Slack
+> 2. Formatted links
+
+*Note*
+- This version has changed the default options, sysUser and sysImg to defaultSysUser and defaultSysImg
+- Thanks to [agarzola](https://github.com/agarzola) and [chetbox](https://github.com/chetbox)
+
 v1.3
 > 1. Added server PHP example and documentation for Private Channels
 > 2. Disabled the textbox while connecting to slackchat
@@ -78,13 +86,13 @@ A link to the profile image of the user.
 
 Your web-app ID of the user. For reference for your support team.
 
-**sysUser**(Required)
+**defaultSysUser**(Required)
 
-The text that will be displayed when your support team writes on the channel.
+The text that will be displayed when your support team writes on the channel. This will be used if the new option, <b>useUserDetails</b>, is set to false.
 
-**sysImg**
+**defaultSysImg**
 
-The image to be displayed when your support team writes on the channel.
+The image to be displayed when your support team writes on the channel. This will be used if the new option, <b>useUserDetails</b>, is set to false.
 
 **queryInterval**
 
@@ -145,6 +153,10 @@ The image link to use if the userImg parameter is '' for a message.
 **webCache**
 
 A few options will be cached in the client for debugging/local testing. The values from the localStorage can be retrieved as follows.
+
+**useUserDetails**
+
+Set this to true to use the support user's Slack name and image instead of options defaultSysUser and defaultSysImg
 
 ```javascript
 //load from localStorage
