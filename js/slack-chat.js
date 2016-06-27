@@ -3,6 +3,7 @@
 (function( $ ) {
 
 	var mainOptions = {};
+	var userList;
 	
 	window.slackChat = false;
 
@@ -15,8 +16,8 @@
         userLink: '', 		//link to the user in the application - shown in #Slack
         userImg: '',		//image of the user
         userId: '',			//id of the user in the application
-        sysImg: '',			//image to show when the support team replies
-        sysUser: '',
+        defaultSysImg: '',			//image to show when the support team replies
+	      defaultSysUser: '',
         queryInterval: 3000,
         chatBoxHeader: "Need help? Talk to our support team right here",
         slackColor: "#36a64f",
@@ -33,7 +34,8 @@
         privateChannelId: false,
 				isOpen: false,
 				badgeElement: false,
-				serverApiGateway: "/server/php/server.php"
+				serverApiGateway: "/server/php/server.php",
+				useUserDetails: false
 	   	};
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -49,7 +51,7 @@
             if(this._options.apiToken == '') methods.validationError('Parameter apiToken is required.');
             if(this._options.channelId == '' && !this._options.privateChannel) methods.validationError('Parameter channelId is required.');
             if(this._options.user == '') methods.validationError('Parameter user is required.');
-            if(this._options.sysUser == '') methods.validationError('Parameter sysUser is required.');
+            if(this._options.defaultSysUser == '') methods.validationError('Parameter defaultSysUser is required.');
             if(this._options.botUser == '') methods.validationError('Parameter botUser is required.');
             if(typeof moment == 'undefined') methods.validationError('MomentJS is not available. Get it from http://momentjs.com');
 
@@ -106,7 +108,7 @@
 						apiToken: window.slackChat._options.apiToken
 						,channelId: window.slackChat._options.channelId
 						,user: window.slackChat._options.user
-						,sysUser: window.slackChat._options.sysUser
+						,defaultSysUser: window.slackChat._options.defaultSysUser
 						,botUser: window.slackChat._options.botUser
 					};
 
@@ -183,8 +185,9 @@
 
 							for(var i=0; i< resp.messages.length; i++)
 							{
+
 								if(resp.messages[i].subtype == 'bot_message' && resp.messages[i].text !== "") {
-									
+
 									message = resp.messages[i];
 									var userName = '';
 									var userImg = '';
@@ -200,6 +203,8 @@
 										msgUserId = message.fields[0].value;
 
 									var messageText = methods.formatMessage(message.text.trim());
+
+									//var messageText = methods.checkforLinks(message);
 
 									html += "<div class='message-item'>";
 									if(userImg !== '' && typeof userImg !== 'undefined')
@@ -222,12 +227,31 @@
 									//support replies exist
 									repliesExist++;
 									
-									message = resp.messages[i].text;
-									var userName = options.sysUser;
-									var messageText = methods.formatMessage(message);
+									messageText = resp.messages[i].text;
+
+									var userId = resp.messages[i].user;
+                  var userName = options.defaultSysUser;
+                  var userImg = options.defaultSysImg;
+
+                  if (options.useUserDetails && userList.length) {
+                    for (var uL = 0; uL < userList.length; uL++) {
+                      var currentUser = userList[uL];
+                      if (currentUser.id == userId) {
+                        if (currentUser.real_name != undefined && currentUser.real_name.length > 0)
+                          userName = currentUser.real_name;
+                        else
+                          userName = currentUser.name;
+
+                        userImg = currentUser.profile.image_48;
+
+                        break;
+                      }
+                    }
+                  }
+
 									html += "<div class='message-item'>";
-									if(options.sysImg !== '')
-										html += "<div class='userImg'><img src='" + options.sysImg + "' /></div>";
+									if(userImg !== '')
+										html += "<div class='userImg'><img src='" + userImg + "' /></div>";
 									html += "<div class='msgBox'>"
 									html += "<div class='username main'>" + userName + "</div>";
 									html += "<div class='message'>" + messageText + "</div>";
@@ -323,7 +347,7 @@
 		getUserPresence: function ($elem) {
 			var options = $elem._options;
 			var active = false;
-			var userList = [];
+			userList = [];
 
 			$.ajax({
 				url: 'https://slack.com/api/users.list'

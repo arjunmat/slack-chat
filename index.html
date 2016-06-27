@@ -127,8 +127,8 @@
 						,userLink: 'http://www.google.com'
 						,userId: 'TEST-USER'
 						,userImg: '/img/user-icon-small.jpg'
-						,sysImg: '/img/improvi.png'
-						,sysUser: $('#sysUser').val()
+						,defaultSysImg: '/img/improvi.png'
+						,defaultSysUser: $('#sysUser').val()
 						,botUser: $('#botUser').val()
 						,elementToDisable: $('.message-box')
 						,disableIfAway: false
@@ -136,6 +136,7 @@
 						,debug:false
 						,privateChannel: false
 						,badgeElement: '.slack-message-count'
+						,useUserDetails: false
 						
 					};
 					
@@ -160,7 +161,7 @@
 						if(scParams.apiToken) $('#apiToken').val(scParams.apiToken);
 						if(scParams.channelId) $('#channelId').val(scParams.channelId);
 						if(scParams.user) $('#user').val(scParams.user);
-						if(scParams.sysUser) $('#sysUser').val(scParams.sysUser);
+						if(scParams.defaultSysUser) $('#sysUser').val(scParams.sysUser);
 						if(scParams.botUser) $('#botUser').val(scParams.botUser);
 						if(scParams.serverApiGateway) $('#serverApiGateway').val(scParams.serverApiGateway);
 					}
