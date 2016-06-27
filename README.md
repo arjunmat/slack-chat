@@ -6,7 +6,8 @@ When users send a message, it will show up as a chat in the Channel specified by
 ### Changelog
 v1.4
 > 1. Added option to use user details from Slack
-> 2. Formatted links
+> 2. Formatted links in messages
+> 3. Use CSS to layout message box
 
 *Note*
 - This version has changed the default options, sysUser and sysImg to defaultSysUser and defaultSysImg
