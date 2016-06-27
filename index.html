@@ -63,8 +63,8 @@
                 userLink: '',       //link to the user in the application - shown in #Slack
                 userImg: '',        //image of the user
                 userId: '',         //id of the user in the application
-                sysImg: '',         //image to show when the support team replies
-                sysUser: '',                //Required.   
+                defaultSysImg: '',         //image to show when the support team replies
+                defaultSysUser: '',                //Required.   
                 queryInterval: 3000,
                 chatBoxHeader: "Need help? Talk to our support team right here",
                 slackColor: "#36a64f",
@@ -77,7 +77,8 @@
                 debug: false,
                 webCache: false,
                 privateChannel: false,
-				serverApiGateway: '/server/php/server.php' 
+				        serverApiGateway: '/server/php/server.php',
+                useUserDetails: false
 }
 
 $(&lt;elem&gt;).slackChat(slackChatOptions);
@@ -110,13 +111,19 @@ $(&lt;elem&gt;).slackChat(slackChatOptions);
 
 <p>Your web-app ID of the user. For reference for your support team.</p>
 
-<p><strong>sysUser</strong>(Required)</p>
+<p><strong>defaultSysUser</strong>(Required)</p>
 
-<p>The text that will be displayed when your support team writes on the channel.</p>
+<p>The text that will be displayed when your support team writes on the channel. This will be used if the <b>useUserDetails</b> option is set to false.
+<br /><br />
+The old option sysImg is now deprecated.
+</p>
 
-<p><strong>sysImg</strong></p>
+<p><strong>defaultSysImg</strong></p>
 
-<p>The image to be displayed when your support team writes on the channel.</p>
+<p>The image to be displayed when your support team writes on the channel. This will be used if the <b>useUserDetails</b> option is set to false.
+<br /><br />
+The old option sysImg is now deprecated.
+</p>
 
 <p><strong>queryInterval</strong></p>
 
@@ -208,6 +215,12 @@ for ( var i = 0, len = localStorage.length; i < len; ++i ) {
 <p><strong>badgeElement</strong></p>
 
 <p>A class or id where the unread notifications must be shown. Ideally, this must be within the SlackChat invocation element and absolutely positioned. This is relevant only when privateChannel is enabled.</p>
+
+<p>Default:false</p>
+
+<p><strong>useUserDetails</strong></p>
+
+<p>Set this to true to use the actual name and image of the support user from #Slack.</p>
 
 <p>Default:false</p>
 	
