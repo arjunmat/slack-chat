@@ -78,7 +78,8 @@
                 webCache: false,
                 privateChannel: false,
 				        serverApiGateway: '/server/php/server.php',
-                useUserDetails: false
+                useUserDetails: false,
+                defaultInvitedUsers: []
 }
 
 $(&lt;elem&gt;).slackChat(slackChatOptions);
@@ -223,6 +224,12 @@ for ( var i = 0, len = localStorage.length; i < len; ++i ) {
 <p>Set this to true to use the actual name and image of the support user from #Slack.</p>
 
 <p>Default:false</p>
+
+<p><strong>defaultInvitedUsers</strong></p>
+
+<p>Pass an array of Slack User IDs to add them to new channels created in privateMode.</p>
+
+<p>Default:[]]</p>
 	
 <h3>
 <a id="try-it-yourself-here" class="anchor" href="#try-it-yourself-here" aria-hidden="true"><span class="octicon octicon-link"></span></a>Try it yourself here</h3>
