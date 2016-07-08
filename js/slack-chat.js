@@ -1,5 +1,5 @@
 /*SlackChat*/
-/* v1.4 */
+/* v1.5 */
 (function( $ ) {
 
 	var mainOptions = {};
@@ -35,7 +35,8 @@
 				isOpen: false,
 				badgeElement: false,
 				serverApiGateway: "/server/php/server.php",
-				useUserDetails: false
+				useUserDetails: false,
+				defaultInvitedUsers: []
 	   	};
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -110,6 +111,8 @@
 						,user: window.slackChat._options.user
 						,defaultSysUser: window.slackChat._options.defaultSysUser
 						,botUser: window.slackChat._options.botUser
+						,serverApiGateway: window.slackChat._options.serverApiGateway
+						,defaultInvitedUsers: window.slackChat._options.defaultInvitedUsers
 					};
 
 					localStorage.scParams = JSON.stringify(scParams);
@@ -460,13 +463,19 @@
 
 			var privateChannelName = options.user + '-' + (options.userId?options.userId:(Math.random()*100000));		
 			
+			var payLoad = {
+				channelName: privateChannelName
+			};
+
+			if(options.defaultInvitedUsers.length > 0) {
+				payLoad.invitedUsers = JSON.stringify(options.defaultInvitedUsers);
+			}
+
 			$.ajax({
 				url: options.serverApiGateway
 				,dataType: 'json'
 				,type: "POST"
-				,data: {
-					channelName: privateChannelName
-				}
+				,data: payLoad
 				,success: function (resp) {
 					if(resp.ok) {
 						options.privateChannelId = window.slackChat._options.privateChannelId = resp.data.id;

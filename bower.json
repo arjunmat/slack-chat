@@ -1,0 +1,29 @@
+{
+  "name": "slack-chat",
+  "homepage": "http://improvi.github.io/slack-chat",
+  "authors": [
+    "Arjun Mathai <arjun@improvi.in>"
+  ],
+  "description": "Slack-Chat is a jQuery plugin that allows customers on your web app to talk to your support team on Slack.",
+  "main": [
+    "js/slack-chat.min.js",
+    "css/slack-chat.css"
+  ],,
+  "moduleType": [],
+  "keywords": [
+    "slack",
+    "support",
+    "chat"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "moment": "~2.13.0"
+  }
+}

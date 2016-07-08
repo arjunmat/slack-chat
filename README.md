@@ -4,6 +4,11 @@ Slack-Chat is a jQuery plugin that integrates a support chat system with your we
 When users send a message, it will show up as a chat in the Channel specified by you.
 
 ### Changelog
+
+v1.5
+> 1. Added option to invite users to a channel by default
+> 2. Fixed storing settings to local storage
+
 v1.4
 > 1. Added option to use user details from Slack
 > 2. Formatted links in messages
@@ -57,8 +62,9 @@ var slackChatOptions = {
                 debug: false,
                 webCache: false,
                 privateChannel: false,
-				        serverApiGateway: '/server/php/server.php',
-                useUserDetails: false
+		serverApiGateway: '/server/php/server.php',
+                useUserDetails: false,
+                defaultInvitedUsers: []
 }
 
 $(<elem>).slackChat(slackChatOptions);
@@ -181,6 +187,12 @@ Create a private channel for the support, instead of a common channel.
 **useUserDetails**
 
 Set this to true to use the support user's Slack name and image instead of options defaultSysUser and defaultSysImg
+
+**defaultInvitedUsers**
+
+Pass an array of Slack User IDs to add these users to the channel created.
+
+Note: Applicable only when privateChannel mode is used.
 
 ### Try it yourself here
 Try a demo here. http://slack-chat.improvi.in

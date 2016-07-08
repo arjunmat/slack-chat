@@ -59,6 +59,13 @@
 					      <input type="text" class="form-control" id="serverApiGateway" placeholder="Required" value="">
 					    </div>
 					  </div>
+
+					  <div class="form-group hide" id="invitedUsers">
+					    <label for="defaultInvitedUsers" class="col-sm-3 control-label">List of users to Invite:</label>
+					    <div class="col-sm-9">
+					      <input type="text" class="form-control" id="defaultInvitedUsers" placeholder="Optional" value="">
+					    </div>
+					  </div>
 					
 
 					  <div class="form-group">
@@ -137,12 +144,15 @@
 						,privateChannel: false
 						,badgeElement: '.slack-message-count'
 						,useUserDetails: false
+						,defaultInvitedUsers: []
 						
 					};
 					
-					if($('#usePrivateChannel').prop('checked'))
+					if($('#usePrivateChannel').prop('checked')) {
 						slackChatOptions.privateChannel = true;
 						slackChatOptions.serverApiGateway = $('#serverApiGateway').val();
+						slackChatOptions.defaultInvitedUsers = $('#defaultInvitedUsers').val().split(",");
+					}
 
 					$('.message-box > a').slackChat(slackChatOptions);
 
@@ -161,9 +171,10 @@
 						if(scParams.apiToken) $('#apiToken').val(scParams.apiToken);
 						if(scParams.channelId) $('#channelId').val(scParams.channelId);
 						if(scParams.user) $('#user').val(scParams.user);
-						if(scParams.defaultSysUser) $('#sysUser').val(scParams.sysUser);
+						if(scParams.defaultSysUser) $('#sysUser').val(scParams.defaultSysUser);
 						if(scParams.botUser) $('#botUser').val(scParams.botUser);
 						if(scParams.serverApiGateway) $('#serverApiGateway').val(scParams.serverApiGateway);
+						if(scParams.defaultInvitedUsers) $('#defaultInvitedUsers').val(scParams.defaultInvitedUsers);
 					}
 				}
 
@@ -212,9 +223,11 @@
 				$('#usePrivateChannel').on('change', function () {
 					if($(this).prop('checked')) {
 						$("#serverApi").removeClass("hide");
+						$("#invitedUsers").removeClass("hide");
 					}
 					else {
 						$("#serverApi").addClass("hide");
+						$("#invitedUsers").addClass("hide");
 					}
 				});
 			});
