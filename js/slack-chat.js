@@ -4,7 +4,7 @@
 
 	var mainOptions = {};
 	var userList;
-	
+
 	window.slackChat = false;
 
 	var methods = {
@@ -81,11 +81,11 @@
 			//register events on the chatbox
 			//1. query Slack on open
 			$(this).on('click', function () {
-				
+
 				//reset the badgeElement
 				if(window.slackChat._options.badgeElement)
 					$(window.slackChat._options.badgeElement).html('').hide();
-				
+
 				//if the private channel functionality is used, set the isOpen flag to true.
 				if(window.slackChat._options.privateChannel) window.slackChat._options.isOpen = true;
 				//set the height of the messages box
@@ -98,11 +98,11 @@
 						methods.querySlack($this);
 						setTimeout(querySlackChannel,  window.slackChat._options.queryInterval);
 					}
-				 
+
 				}();
 
 				$('.slackchat .slack-new-message').focus();
-				
+
 				if(window.slackChat._options.webCache) {
 					//store the values in the webcache
 					var scParams =  {
@@ -145,7 +145,7 @@
 				if(window.slackChat._options.sendOnEnter)
 				{
 			   		var code = (e.keyCode ? e.keyCode : e.which);
-			 		if(code == 13) 
+			 		if(code == 13)
 			 		{
 			 			methods.postMessage(window.slackChat, window.slackChat._options);
 			 			e.preventDefault();
@@ -162,9 +162,9 @@
 
 			methods.createChannel($elem, function (channel) {
 				window.slackChat._options.channelId = channel.id;
-				
+
 				$('.slack-new-message').prop('disabled', false).prop('placeholder', 'Write a message...');
-				
+
 				$.ajax({
 					url: 'https://slack.com/api/channels.history'
 					,type: "POST"
@@ -183,7 +183,7 @@
 							var html = '';
 							window.slackChat._options.latest = resp.messages[0].ts;
 							resp.messages = resp.messages.reverse();
-							
+
 							var repliesExist = 0;
 
 							for(var i=0; i< resp.messages.length; i++)
@@ -229,7 +229,7 @@
 
 									//support replies exist
 									repliesExist++;
-									
+
 									messageText = resp.messages[i].text;
 
 									var userId = resp.messages[i].user;
@@ -266,16 +266,16 @@
 						}
 
 							$('.slack-message-box').append(html);
-							
+
 							//scroll to the bottom
 							$('.slack-message-box').stop().animate({
 		  						scrollTop: $(".slack-message-box")[0].scrollHeight
 							}, 800);
-							
+
 							//support team has replied and the chat box is closed
 							if(repliesExist > 0 && window.slackChat._options.isOpen === false && window.slackChat._options.badgeElement) {
 								$(window.slackChat._options.badgeElement).html(repliesExist).show();
-								
+
 							}
 						}
 						else if(!resp.ok)
@@ -287,12 +287,12 @@
 				});
 			});
 
-			
+
 		},
 
 		postMessage: function ($elem) {
 
-			var options = $elem._options;		
+			var options = $elem._options;
 
 			var attachment = {};
 
@@ -309,7 +309,7 @@
                     "short": true
 				}
 			];
-			
+
 			//do not send the message if the value is empty
 			if($('.slack-new-message').val().trim() === '') return false;
 
@@ -367,7 +367,7 @@
 							for(var i=0; i<userList.length; i++) {
 								if(active) break;
 								if(userList[i].is_bot) continue;
-								
+
 								$.ajax({
 									url: 'https://slack.com/api/users.getPresence'
 									,dataType: 'json'
@@ -397,17 +397,19 @@
 						}
 					}
 				}
-			});			
+			});
 		},
 
 		destroy: function ($elem) {
 			$($elem).unbind('click');
 
+			$(window.slackChat).unbind('click');
+
 			$('.slackchat').remove();
 		},
 
 		formatMessage: function (text) {
-			
+
 			//hack for converting to html entities
 			var formattedText = $("<textarea/>").html(text).text();
 
@@ -446,8 +448,8 @@
 				};
 
 				callback(channel);
-				
-				return false;				
+
+				return false;
 			}
 
 			if(options.privateChannelId) {
@@ -457,12 +459,12 @@
 				};
 
 				callback(channel);
-				
+
 				return false;
 			}
 
-			var privateChannelName = options.user + '-' + (options.userId?options.userId:(Math.random()*100000));		
-			
+			var privateChannelName = options.user + '-' + (options.userId?options.userId:(Math.random()*100000));
+
 			var payLoad = {
 				channelName: privateChannelName
 			};
@@ -490,7 +492,7 @@
 			});
 		}
 	};
- 
+
     $.fn.slackChat = function( methodOrOptions ) {
 
     	if(methods[methodOrOptions]) {
@@ -503,5 +505,5 @@
             $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.slackChat' );
         }
     };
- 
+
 }( jQuery ));
