@@ -403,6 +403,9 @@
 		destroy: function ($elem) {
 			$($elem).unbind('click');
 
+			//added code for safely unbinding the element. thanks to @Jflinchum.
+			$(window.slackChat).unbind('click');
+
 			$('.slackchat').remove();
 		},
 

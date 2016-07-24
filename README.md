@@ -5,6 +5,9 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.5.2
+> 1. Fixes for the destroy function. Thanks to [Jflinchum](https://github.com/Jflinchum)
+
 v1.5.1
 > 1. Fixes for links, code blocks and added functionality for code
 
