@@ -1,5 +1,5 @@
 /*SlackChat*/
-/* v1.5 */
+/* v1.5.1 */
 (function( $ ) {
 
 	var mainOptions = {};
@@ -230,7 +230,7 @@
 									//support replies exist
 									repliesExist++;
 									
-									messageText = resp.messages[i].text;
+									messageText = methods.formatMessage(resp.messages[i].text.trim());
 
 									var userId = resp.messages[i].user;
                   var userName = options.defaultSysUser;
@@ -424,14 +424,13 @@
 				.prop('outerHTML');
 			})
 			// `code block`
-			.replace(/(?:[`]{3,})(?:\n)([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:\n)(?:[`]{3,})/g, function(match, code) {
-				//console.log(match, code);
+			.replace(/(?:[`]{3,3})(?:\n)?([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:\n)?(?:[`]{3,3})/g, function(match, code) {
 				return $('<code>').text(code).prop('outerHTML');
 			})
 			// `code`
-			/*.replace(/(?:[`])([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:[`])`/g, function(match, code) {
+			.replace(/(?:[`]{1,1})([a-zA-Z0-9<>\\\.\*\n\r\-_ ]+)(?:[`]{1,1})/g, function(match, code) {
 				return $('<code>').text(code).prop('outerHTML');
-			})*/
+			})
 			// new line character
 			.replace(/\n/g, "<br />");
 		},

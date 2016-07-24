@@ -5,6 +5,9 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.5.1
+> 1. Fixes for links, code blocks and added functionality for code
+
 v1.5
 > 1. Added option to invite users to a channel by default
 > 2. Fixed storing settings to local storage
