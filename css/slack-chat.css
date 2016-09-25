@@ -70,7 +70,8 @@
 	display: inline-block;
 	vertical-align: top;
 	margin-top: 10px;
-	margin-left: 10px;
+	margin-right: 10px;
+  float: right;
 }
 
 .slackchat .slack-post-message:hover {
@@ -181,4 +182,5 @@
 	bottom: 0;
 	border-top: 1px solid #ddd;
 	padding: 10px;
+	background: #fff;
 }
