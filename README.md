@@ -5,6 +5,12 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.5.3 
+> 1. Invite the current user if no other invited users are specified
+> 2. Minor CSS fixes.
+> 3. Automatically resize the message window if the window size changes
+Thanks to [ulisesguerrero](https://github.com/ulisesguerrero)
+
 v1.5.2
 > 1. Fixes for the destroy function. Thanks to [Jflinchum](https://github.com/Jflinchum)
 

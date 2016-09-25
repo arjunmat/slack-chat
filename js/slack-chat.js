@@ -1,5 +1,5 @@
 /*SlackChat*/
-/* v1.5.1 */
+/* v1.5.3 */
 (function( $ ) {
 
 	var mainOptions = {};
