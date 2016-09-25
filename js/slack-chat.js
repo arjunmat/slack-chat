@@ -36,7 +36,8 @@
 				badgeElement: false,
 				serverApiGateway: "/server/php/server.php",
 				useUserDetails: false,
-				defaultInvitedUsers: []
+				defaultInvitedUsers: [],
+				defaultUserImg: '/img/user-icon-small.jpg',
 	   	};
 
 			this._options = $.extend(true, {}, this._defaults, options);
@@ -155,6 +156,10 @@
 
 			//get user online/offline status
 			methods.getUserPresence(window.slackChat, window.slackChat._options);
+
+			$(window).resize(function () {
+				methods.resizeWindow();
+			});
 		},
 
 		querySlack: function ($elem) {
@@ -470,7 +475,7 @@
 			};
 
 			if(options.defaultInvitedUsers.length > 0) {
-				payLoad.invitedUsers = JSON.stringify(options.defaultInvitedUsers);
+				payLoad.invitedUsers = JSON.stringify($.trim(options.defaultInvitedUsers));
 			}
 
 			$.ajax({
@@ -490,6 +495,10 @@
 					return false;
 				}
 			});
+		},
+
+		resizeWindow: function () {
+			$('.slack-message-box').height($('.slack-chat-box').height() - $('.desc').height() - $('.send-area').height() - parseInt(window.slackChat._options.heightOffset));
 		}
 	};
  
