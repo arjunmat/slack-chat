@@ -10,6 +10,7 @@
 
 	define('SLACK_API_URL', 'https://slack.com/api/channels.join');
 	define('SLACK_API_INVITE_URL', 'https://slack.com/api/channels.invite');
+	define('SLACK_API_USER_IDENTITY_URL', 'https://slack.com/api/users.identity');
 	define('SLACK_API_USER_TOKEN', '<Replace with your #Slack token>');
 
 	$channelName = $_POST['channelName'];
@@ -43,6 +44,26 @@
 			if($slackData->ok) {
 				/* Channel created or joined. Return the channel ID */
 				$returnArr["data"] = ["id" => $slackData->channel->id];
+
+				/* Invite the token user to the channel, if no other users are invited*/
+				if(empty($invitedUsers)) {
+
+					$chUserInfo = curl_init(SLACK_API_USER_IDENTITY_URL);
+
+					$payLoadUser = [
+						"token" => SLACK_API_USER_TOKEN
+					];
+
+					curl_setopt($chUserInfo, CURLOPT_HEADER, 0);
+					curl_setopt($chUserInfo, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($chUserInfo, CURLOPT_POSTFIELDS, $payLoadUser);
+
+					if(!$userIdentity = curl_exec($chUserInfo)) {
+						throw new Exception ("Failed to get current user identity: ");
+					}
+
+					$invitedUsers[] = $userIdentity;
+				}
 
 				/* Invite users to join the #Slack channel created */
 				foreach($invitedUsers as $user) {
