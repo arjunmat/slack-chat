@@ -5,6 +5,9 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.5.4 
+> 1. Fixed bug where % signs in messages were not correctly handled
+
 v1.5.3 
 > 1. Invite the current user if no other invited users are specified
 > 2. Minor CSS fixes.

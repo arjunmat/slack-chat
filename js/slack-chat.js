@@ -1,5 +1,5 @@
 /*SlackChat*/
-/* v1.5.3 */
+/* v1.5.4 */
 (function( $ ) {
 
 	var mainOptions = {};
@@ -419,7 +419,7 @@
 			//hack for converting to html entities
 			var formattedText = $("<textarea/>").html(text).text();
 
-			return decodeURI(formattedText)
+			return unescape(formattedText)
 			// <URL>
 			.replace(/<(.+?)(\|(.*?))?>/g, function(match, url, _text, text) {
 				if (!text) text = url;
