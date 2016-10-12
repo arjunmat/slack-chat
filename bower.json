@@ -8,7 +8,7 @@
   "main": [
     "js/slack-chat.min.js",
     "css/slack-chat.css"
-  ],,
+  ],
   "moduleType": [],
   "keywords": [
     "slack",
