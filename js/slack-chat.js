@@ -1,5 +1,5 @@
 /*SlackChat*/
-/* v1.5.4 */
+/* v1.5.5 */
 (function( $ ) {
 
 	var mainOptions = {};
@@ -348,7 +348,7 @@
 		},
 
 		validationError: function (errorTxt) {
-			$.error('[SlackChat Error] ' + errorTxt);
+			console.log('[SlackChat Error] ' + errorTxt);
 			return false;
 		},
 

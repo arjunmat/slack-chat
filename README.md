@@ -5,6 +5,9 @@ When users send a message, it will show up as a chat in the Channel specified by
 
 ### Changelog
 
+v1.5.5 
+> 1. Replaced $.error in validationErrors method with console.log
+
 v1.5.4 
 > 1. Fixed bug where % signs in messages were not correctly handled
 
